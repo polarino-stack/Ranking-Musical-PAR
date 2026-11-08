@@ -1,0 +1,143 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1rem clamp(1rem, 5vw, 4rem);
+  background-color: #171329;
+  color: #fff;
+  border-bottom: 3px solid #d6a84f;
+}
+
+.app-header-brand {
+  color: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-header-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.app-header-nav a,
+.app-header-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-header-nav a:hover,
+.app-header-nav a:focus-visible,
+.app-header-back:hover,
+.app-header-back:focus-visible {
+  background-color: #30294a;
+}
+
+.app-header-nav a.router-link-exact-active {
+  color: #f0c66e;
+}
+
+.app-header-back:focus-visible {
+  outline: 2px solid #f0c66e;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+.app-footer {
+  border-top: 3px solid #d6a84f;
+  background:
+    radial-gradient(ellipse at top left, #30294a 0, transparent 45%),
+    #171329;
+  color: #fff;
+}
+
+.footer-content {
+  width: min(100% - 3rem, 1200px);
+  margin: 0 auto;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.5fr;
+  gap: 3rem;
+  padding: 3rem 0;
+}
+
+.footer-brand {
+  display: inline-block;
+  margin-bottom: 0.8rem;
+  color: #f0c66e;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer-about p,
+.footer-message p {
+  max-width: 340px;
+  color: #d3cede;
+  line-height: 1.7;
+}
+
+.footer-nav {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.footer-nav h2,
+.footer-message h2 {
+  margin-bottom: 0.5rem;
+  color: #f0c66e;
+  font-size: 1rem;
+}
+
+.footer-nav a {
+  color: #d3cede;
+  text-decoration: none;
+}
+
+.footer-nav a:hover,
+.footer-nav a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid rgb(255 255 255 / 15%);
+  color: #aaa5b7;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}
