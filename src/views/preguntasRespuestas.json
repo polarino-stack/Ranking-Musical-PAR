@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "cancionId": 1,
+    "tipo": "cancion",
+    "pregunta": "¿Cómo se llama la canción que está sonando?",
+    "archivo": "ListaMusica/001-2244068-RA unsKrypted-Hey Ma How You.mp3",
+    "A": "Bad",
+    "B": "Hey Ma How You",
+    "C": "Easy Work ft. Maya Miko",
+    "D": "Sur la Lune",
+    "correcta": "B"
+  },
+  {
+    "id": 2,
+    "cancionId": 2,
+    "tipo": "artista",
+    "pregunta": "¿Quién interpreta esta canción?",
+    "archivo": "ListaMusica/004-2244088-S.C. Chris-Bad.mp3",
+    "A": "Boulvard X-Audi",
+    "B": "FROSTiE",
+    "C": "S.C. Chris",
+    "D": "PUETO PA LO MIO RECORDS",
+    "correcta": "C"
+  },
+  {
+    "id": 3,
+    "cancionId": 3,
+    "tipo": "duracion",
+    "pregunta": "¿Cuánto dura esta canción?",
+    "archivo": "ListaMusica/005-2207760-Kentix-Kentix - C_a Rend Heureux.mp3",
+    "A": "2:50",
+    "B": "4:13",
+    "C": "2:22",
+    "D": "3:43",
+    "correcta": "C"
+  },
+  {
+    "id": 4,
+    "cancionId": 4,
+    "tipo": "cancion",
+    "pregunta": "¿Cómo se llama la canción que está sonando?",
+    "archivo": "ListaMusica/006-2155784-PUETO PA LO MIO RECORDS-JORDAN 23 - PUETO PA LO MIO RECORDS Presenta.mp3",
+    "A": "Bad",
+    "B": "Easy Work ft. Maya Miko",
+    "C": "JORDAN 23 - PUETO PA LO MIO RECORDS Presenta",
+    "D": "FROSTiE - G-CODE",
+    "correcta": "C"
+  },
+  {
+    "id": 5,
+    "cancionId": 5,
+    "tipo": "artista",
+    "pregunta": "¿Quién interpreta esta canción?",
+    "archivo": "ListaMusica/008-2041854-Dreadpool-Easy Work ft. Maya Miko.mp3",
+    "A": "FROSTiE",
+    "B": "Dreadpool",
+    "C": "Boulvard X-Audi",
+    "D": "RA unsKrypted",
+    "correcta": "B"
+  },
+  {
+    "id": 6,
+    "cancionId": 6,
+    "tipo": "duracion",
+    "pregunta": "¿Cuánto dura esta canción?",
+    "archivo": "ListaMusica/009-2026422-Boulvard X-Audi-Make a level.mp3",
+    "A": "2:22",
+    "B": "4:13",
+    "C": "3:37",
+    "D": "3:20",
+    "correcta": "D"
+  }
+]
