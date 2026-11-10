@@ -44,9 +44,9 @@
 </template>
 
 <script setup>
-  import { Howler } from 'howler';
   import { Howl } from 'howler';
   import router from '@/router';
+  import { resetPartida } from '@/stores/partida';
 
 
   const audioTest = new Howl({
@@ -71,7 +71,8 @@
   }
 
   function comenzarPartida() {
-    router.push('/jugar/partida/escenario')
+    resetPartida()
+    router.push('/jugar/partida/escenario/1')
   }
   
 </script>

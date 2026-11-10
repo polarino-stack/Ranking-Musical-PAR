@@ -1,3 +1,85 @@
+
+<script setup>
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ReproducirCanciones from '@/components/ReproducirCanciones.vue'
+import ValidarRespuestas from '@/components/ValidarRespuestas.vue'
+import { answerStates, gameFinished } from '@/stores/partida'
+import preguntas from './preguntasRespuestas.json'
+import canciones from './canciones.json'
+
+const props = defineProps({
+  questionId: {
+    type: [String, Number],
+    required: true,
+  },
+})
+
+const router = useRouter()
+const questionIndex = computed(() =>
+  preguntas.findIndex(pregunta => String(pregunta.id) === String(props.questionId)),
+)
+const selectedAnswer = ref(answerStates.value[preguntas[questionIndex.value]?.id]?.answer ?? null)
+const answerValidated = computed(() =>
+  Boolean(answerStates.value[preguntaActual.value.id]),
+)
+const letras = ['A', 'B', 'C', 'D']
+
+const preguntaActual = computed(() => preguntas[questionIndex.value])
+const cancionActual = computed(() =>
+  canciones.find(cancion => cancion.id === preguntaActual.value.cancionId),
+)
+const audioSource = computed(() =>
+  `/audio/${preguntaActual.value.archivo.split('/').pop()}`,
+)
+const progress = computed(() => ((questionIndex.value + 1) / preguntas.length) * 100)
+const score = computed(() =>
+  Object.values(answerStates.value).filter(answer => answer.correct).length,
+)
+
+function cancionDeOpcion(letra) {
+  const respuesta = preguntaActual.value[letra].normalize('NFC')
+
+  if (preguntaActual.value.tipo === 'cancion') {
+    return canciones.find(cancion => cancion.cancion.normalize('NFC') === respuesta)
+  }
+
+  if (preguntaActual.value.tipo === 'artista') {
+    return canciones.find(cancion => cancion.artista.normalize('NFC') === respuesta)
+  }
+
+  return cancionActual.value
+}
+
+function detalleOpcion(letra) {
+  if (preguntaActual.value.tipo === 'duracion') return 'Duración de la pista'
+
+  const cancion = cancionDeOpcion(letra)
+  return preguntaActual.value.tipo === 'cancion'
+    ? cancion?.artista ?? 'Artista'
+    : cancion?.cancion ?? 'Canción'
+}
+
+function validarOContinuar() {
+  if (!answerValidated.value) {
+    if (selectedAnswer.value === null) return
+
+    answerStates.value[preguntaActual.value.id] = {
+      answer: selectedAnswer.value,
+      correct: selectedAnswer.value === preguntaActual.value.correcta,
+    }
+    return
+  }
+
+  if (questionIndex.value === preguntas.length - 1) {
+    gameFinished.value = true
+    return
+  }
+
+  router.push(`/jugar/partida/escenario/${preguntas[questionIndex.value + 1].id}`)
+}
+</script>
+
 <template>
   <main class="stage">
     <section class="stage-content" aria-labelledby="stage-title">
@@ -12,7 +94,7 @@
 
         <div class="score-card">
           <span class="score-label">Puntuación</span>
-          <strong>0 <span>pts</span></strong>
+          <strong>{{ score }} <span>pts</span></strong>
         </div>
       </header>
 
@@ -21,27 +103,29 @@
         role="progressbar"
         aria-label="Progreso de la partida"
         aria-valuemin="0"
-        aria-valuemax="10"
-        aria-valuenow="1"
+        :aria-valuemax="preguntas.length"
+        :aria-valuenow="questionIndex + 1"
       >
-        <span class="round-progress-fill"></span>
+        <span class="round-progress-fill" :style="{ width: `${progress}%` }"></span>
       </div>
-      <p class="round-count">Pregunta 1 de 10</p>
+      <p class="round-count">
+        Pregunta {{ questionIndex + 1 }} de {{ preguntas.length }}
+      </p>
 
-      <section class="question-card" aria-labelledby="question-title">
+      <section v-if="!gameFinished" class="question-card" aria-labelledby="question-title">
         <p class="eyebrow">Escucha y adivina</p>
-        <h2 id="question-title">¿Qué canción está sonando?</h2>
+        <h2 id="question-title">{{ preguntaActual.pregunta }}</h2>
         <p class="question-description">
-          Escucha el fragmento y elige la respuesta correcta.
+          Escucha la canción y elige la respuesta correcta.
         </p>
 
-        <div class="audio-placeholder" aria-label="Espacio reservado para el reproductor de audio">
-          <div class="record-art" aria-hidden="true">
-            <span class="record-center"></span>
+        <div class="audio-placeholder">
+          <div class="record-art">
+            <ReproducirCanciones :key="preguntaActual.id" :src="audioSource" />
           </div>
           <div class="audio-placeholder-content">
             <span class="audio-kicker">Fragmento musical</span>
-            <span class="audio-placeholder-title">El reproductor irá aquí</span>
+            <span class="audio-placeholder-title">Reproductor de audio</span>
           </div>
           <div class="sound-bars" aria-hidden="true">
             <span></span>
@@ -57,36 +141,42 @@
         <section class="answers" aria-labelledby="answers-title">
           <h3 id="answers-title">Selecciona una respuesta</h3>
           <div class="answer-list">
-            <article class="answer-option">
-              <span class="answer-letter">A</span>
-              <span class="answer-copy">
-                <strong>Título de la canción</strong>
-                <span>Nombre del artista</span>
-              </span>
-            </article>
-            <article class="answer-option">
-              <span class="answer-letter">B</span>
-              <span class="answer-copy">
-                <strong>Título de la canción</strong>
-                <span>Nombre del artista</span>
-              </span>
-            </article>
-            <article class="answer-option">
-              <span class="answer-letter">C</span>
-              <span class="answer-copy">
-                <strong>Título de la canción</strong>
-                <span>Nombre del artista</span>
-              </span>
-            </article>
-            <article class="answer-option">
-              <span class="answer-letter">D</span>
-              <span class="answer-copy">
-                <strong>Título de la canción</strong>
-                <span>Nombre del artista</span>
-              </span>
-            </article>
+            <button
+            v-for="letra in letras"
+            :key="letra"
+            class="answer-option"
+            :class="{ 'is-selected': selectedAnswer === letra}"
+            type="button"
+            :disabled="answerValidated"
+            :aria-pressed="selectedAnswer === letra"
+            @click="selectedAnswer = letra"
+            >
+
+            <span class="answer-letter">{{ letra }}</span>
+            <span class="answer-copy">
+            <strong>{{ preguntaActual[letra] }}</strong>
+            <span>{{ detalleOpcion(letra) }}</span>
+            </span>
+          </button>
           </div>
+          <p v-if="answerValidated" class="answer-feedback" role="status">
+            {{ selectedAnswer === preguntaActual.correcta
+            ? '¡Correcto!'
+            : `No es correcto. La respuesta era ${preguntaActual.correcta}: ${preguntaActual[preguntaActual.correcta]}.` }}
+          </p>
+          <ValidarRespuestas
+            :disabled="selectedAnswer === null && !answerValidated"
+            :label="answerValidated
+            ? questionIndex === preguntas.length - 1 ? 'Ver resultado' : 'Siguiente pregunta'
+            : 'Validar respuesta'"
+            @validate="validarOContinuar"
+          />
         </section>
+      </section>
+      <section v-else class="question-card game-results" aria-labelledby="results-title">
+        <p class="eyebrow">Partida terminada</p>
+        <h2 id="results-title">¡Has completado las preguntas!</h2>
+        <p>Tu puntuación final es {{ score }} de {{ preguntas.length }}.</p>
       </section>
     </section>
   </main>
@@ -177,7 +267,6 @@
 
 .round-progress-fill {
   display: block;
-  width: 10%;
   height: 100%;
   border-radius: inherit;
   background: #d6a84f;
@@ -242,14 +331,6 @@
   background: repeating-radial-gradient(circle, #30294a 0 4px, #403957 5px 6px);
 }
 
-.record-center {
-  width: 0.8rem;
-  aspect-ratio: 1;
-  border: 4px solid #f0c66e;
-  border-radius: 50%;
-  background: #201b34;
-}
-
 .audio-placeholder-content {
   display: grid;
   gap: 0.35rem;
@@ -300,6 +381,22 @@
   font-size: 1rem;
 }
 
+.answer-feedback {
+  margin: 1.25rem 0 0;
+  color: #30294a;
+  font-weight: 700;
+  text-align: center;
+}
+
+.game-results {
+  text-align: center;
+}
+
+.game-results > p:last-child {
+  color: #686373;
+  line-height: 1.6;
+}
+
 .answer-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -310,11 +407,49 @@
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  width: 100%;
   min-height: 76px;
   padding: 0.9rem 1rem;
   border: 1px solid #e8e4ef;
   border-radius: 0.8rem;
   background: #fff;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.answer-option:hover {
+  border-color: #30294a;
+}
+
+.answer-option:disabled {
+  cursor: default;
+}
+
+.answer-option:focus-visible {
+  outline: 3px solid #d6a84f;
+  outline-offset: 3px;
+}
+
+.answer-option.is-selected {
+  border-color: #30294a;
+  background: #30294a;
+  color: #fff;
+}
+
+.answer-option.is-selected .answer-letter {
+  background: #fff;
+  color: #30294a;
+}
+
+.answer-option.is-selected .answer-copy strong,
+.answer-option.is-selected .answer-copy span {
+  color: #fff;
 }
 
 .answer-letter {
